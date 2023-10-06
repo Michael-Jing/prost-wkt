@@ -36,3 +36,4 @@ prost-wkt-build = { version = "0.5.0", path = "../wkt-build" }
 regex = "1"
 protobuf-src = { version = "1.1.0", optional = true }
 protox = { version = "0.5.0", optional = true }
+base64 = "0.21"

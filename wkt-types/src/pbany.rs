@@ -1,3 +1,4 @@
+use base64::{engine::general_purpose, Engine as _};
 use prost_wkt::MessageSerde;
 use serde::de::{Deserialize, Deserializer};
 use serde::ser::{Serialize, SerializeStruct, Serializer};
@@ -151,7 +152,6 @@ impl Serialize for Any {
     where
         S: Serializer,
     {
-        use base64::{engine::general_purpose, Engine as _};
         let mut state = serializer.serialize_struct("Any", 3)?;
         state.serialize_field("type_url", &self.type_url)?;
         state.serialize_field("value", general_purpose::STANDARD.encode(&self.value))?;
