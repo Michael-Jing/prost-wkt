@@ -4,7 +4,7 @@ use serde::ser::{Serialize, SerializeStruct, Serializer};
 
 include!(concat!(env!("OUT_DIR"), "/pbany/google.protobuf.rs"));
 
-use prost::{DecodeError, Message, EncodeError, Name};
+use prost::{DecodeError, EncodeError, Message, Name};
 
 use std::borrow::Cow;
 
@@ -144,7 +144,6 @@ impl Any {
         err.push("unexpected type URL", "type_url");
         Err(err)
     }
-
 }
 
 impl Serialize for Any {
@@ -152,15 +151,11 @@ impl Serialize for Any {
     where
         S: Serializer,
     {
-        match self.clone().try_unpack() {
-            Ok(result) => serde::ser::Serialize::serialize(result.as_ref(), serializer),
-            Err(_) => {
-                let mut state = serializer.serialize_struct("Any", 3)?;
-                state.serialize_field("@type", &self.type_url)?;
-                state.serialize_field("value", &self.value)?;
-                state.end()
-            }
-        }
+        use base64::{engine::general_purpose, Engine as _};
+        let mut state = serializer.serialize_struct("Any", 3)?;
+        state.serialize_field("type_url", &self.type_url)?;
+        state.serialize_field("value", general_purpose::STANDARD.encode(&self.value))?;
+        state.end()
     }
 }
 
