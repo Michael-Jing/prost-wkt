@@ -154,7 +154,7 @@ impl Serialize for Any {
     {
         let mut state = serializer.serialize_struct("Any", 3)?;
         state.serialize_field("type_url", &self.type_url)?;
-        state.serialize_field("value", general_purpose::STANDARD.encode(&self.value))?;
+        state.serialize_field("value", &general_purpose::STANDARD.encode((&self.value)))?;
         state.end()
     }
 }
